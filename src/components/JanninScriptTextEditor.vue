@@ -9,8 +9,14 @@
   </div>
 
   <div class="text-editor">
-    <div class="line" :class="{ 'line-select': activeLine === 1 }" @click="setActiveLine(1)">
-      <div class="line-number">1</div>
+    <!-- <div class="line" :class="{ 'line-select': activeLine === 1 }" @click="setActiveLine(1)"> -->
+    <ScriptLine text="Hello" :activeLine="activeLine === 1" :lineNumber="1" @setActiveLine="setActiveLine" />
+    <ScriptLine text="Hello" :activeLine="activeLine === 2" :lineNumber="2" @setActiveLine="setActiveLine" />
+    <ScriptLine text="Hello" :activeLine="activeLine === 3" :lineNumber="3" @setActiveLine="setActiveLine" />
+    <ScriptLine text="Hello" :activeLine="activeLine === 4" :lineNumber="4" @setActiveLine="setActiveLine" />
+    <ScriptLine text="Hello" :activeLine="activeLine === 5" :lineNumber="5" @setActiveLine="setActiveLine" />
+
+    <!-- <div class="line-number">1</div>
       <div class="line-content">
         <span class="operator">for (</span>
 
@@ -47,12 +53,13 @@
       <div class="line-content">
         <span class="grey">}</span>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import ScriptLine from "./ScriptLine.vue";
 
 export default defineComponent({
   data() {
@@ -65,8 +72,17 @@ export default defineComponent({
     setActiveLine(line: number) {
       this.activeLine = line;
     },
+    increment() {
+      this.activeLine += 1;
+    },
+    decrement() {
+      this.activeLine -= 1;
+    },
   },
 
+  components: {
+    ScriptLine,
+  },
   name: "JanninScriptTextEditor",
   props: {
     msg: String,
@@ -113,43 +129,5 @@ export default defineComponent({
   flex-direction: column;
   min-height: 100vh;
   user-select: none;
-}
-.line {
-  display: flex;
-  align-items: center;
-  color: white;
-
-  cursor: text;
-}
-
-.line-select {
-  background-color: #333333;
-}
-
-.line-number {
-  width: 2rem;
-  padding: 2px 0;
-  text-align: center;
-  color: white;
-}
-
-.keyword {
-  color: rgb(75, 115, 123) !important;
-}
-
-.operator {
-  color: rgb(140, 65, 85) !important;
-}
-
-.value {
-  color: rgb(100, 100, 140);
-}
-
-.function {
-  color: rgb(100, 150, 115);
-}
-
-.grey {
-  color: rgb(100, 100, 100);
 }
 </style>
