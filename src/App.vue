@@ -16,8 +16,11 @@ export default defineComponent({
 </script>
 
 <style>
+body {
+  margin: 0;
+}
+
 #app {
-  /* font-family: Avenir, Helvetica, Arial, sans-serif; */
   font-family: "Source Code Pro", monospace;
 }
 </style>

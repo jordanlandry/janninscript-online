@@ -9,7 +9,7 @@
   </div>
 
   <div class="text-editor">
-    <div class="line">
+    <div class="line" :class="{ 'line-select': activeLine === 1 }" @click="setActiveLine(1)">
       <div class="line-number">1</div>
       <div class="line-content">
         <span class="operator">for (</span>
@@ -30,7 +30,7 @@
         <span class="grey"> {</span>
       </div>
     </div>
-    <div class="line line-highlight">
+    <div class="line" :class="{ 'line-select': activeLine === 2 }" @click="setActiveLine(2)">
       <div class="line-number">2</div>
       <div class="line-content">
         <span class="variable">console.</span>
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div class="line">
+    <div class="line" :class="{ 'line-select': activeLine === 3 }" @mousedown="setActiveLine(3)">
       <div class="line-number">3</div>
       <div class="line-content">
         <span class="grey">}</span>
@@ -57,13 +57,13 @@ import { defineComponent } from "vue";
 export default defineComponent({
   data() {
     return {
-      count: 0,
+      activeLine: 0,
     };
   },
 
   methods: {
-    increment() {
-      this.count++;
+    setActiveLine(line: number) {
+      this.activeLine = line;
     },
   },
 
@@ -109,19 +109,20 @@ export default defineComponent({
 
 .text-editor {
   background-color: rgb(34, 34, 34);
-
   display: flex;
-  /* align-items: center; */
-  justify-content: center;
   flex-direction: column;
+  min-height: 100vh;
+  user-select: none;
 }
 .line {
   display: flex;
   align-items: center;
   color: white;
+
+  cursor: text;
 }
 
-.line-highlight {
+.line-select {
   background-color: #333333;
 }
 
