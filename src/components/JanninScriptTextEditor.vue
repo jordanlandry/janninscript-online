@@ -9,6 +9,7 @@
   </div>
 
   <div class="text-editor" @keydown="(e) => handleKeydown(e)" tabindex="-1">
+    <TextCursor :linePosition="linePosition" :activeLine="activeLine" />
     <div v-for="(line, index) in lines" :key="index">
       <ScriptLine :text="line" :activeLine="activeLine === index" :lineNumber="index" @setActiveLine="setActiveLine" />
     </div>
@@ -16,8 +17,10 @@
 </template>
 
 <script lang="ts">
+import { tSParenthesizedType } from "@babel/types";
 import { defineComponent } from "vue";
 import ScriptLine from "./ScriptLine.vue";
+import TextCursor from "./TextCursor.vue";
 
 interface KeyStringObject {
   [key: string]: string;
@@ -27,7 +30,10 @@ export default defineComponent({
   data() {
     return {
       activeLine: 0,
+      linePosition: 0,
       lines: [""],
+
+      phantomBracket: false,
     };
   },
 
@@ -36,12 +42,63 @@ export default defineComponent({
       this.activeLine = line;
     },
 
-    increment() {
-      this.activeLine += 1;
+    handleBackspace() {
+      const line = this.lines[this.activeLine];
+      // this.lines[this.activeLine] = this.lines[this.activeLine].slice(this.linePosition, 1);
+
+      // Filter out the character at the line position, basically running
+      // line.filter((char:string, index:number) => index !== this.linePosition); on a string
+      let newStr = "";
+      for (let i = 0; i < line.length; i++) {
+        if (i === this.linePosition - 1) continue;
+
+        newStr += line[i];
+      }
+
+      this.lines[this.activeLine] = newStr;
+
+      // If the line is empty, then delete it
+      if (this.lines[this.activeLine] === "") {
+        if (this.lines.length > 1) {
+          this.lines.splice(this.activeLine, 1);
+          this.activeLine = Math.max(this.activeLine - 1, 0);
+        }
+      }
+
+      this.linePosition = Math.max(this.linePosition - 1, 0);
     },
 
-    decrement() {
-      this.activeLine -= 1;
+    handleDelete() {
+      const line = this.lines[this.activeLine];
+      // this.lines[this.activeLine] = this.lines[this.activeLine].slice(this.linePosition, 1);
+
+      // Filter out the character at the line position, basically running
+      // line.filter((char:string, index:number) => index !== this.linePosition); on a string
+      let newStr = "";
+      for (let i = 0; i < line.length; i++) {
+        if (i === this.linePosition) continue;
+
+        newStr += line[i];
+      }
+
+      this.lines[this.activeLine] = newStr;
+
+      // If the line is empty, then delete it
+      if (this.lines[this.activeLine] === "") {
+        if (this.lines.length > 1) {
+          this.lines.splice(this.activeLine, 1);
+          this.activeLine = Math.max(this.activeLine - 1, 0);
+        }
+      }
+    },
+
+    spliceSlice(str: string, index: number, count: number, add: string) {
+      if (index < 0) {
+        index = str.length + index;
+        if (index < 0) index = 0;
+      }
+
+      return str.slice(0, index) + (add || "") + str.slice(index + count);
     },
 
     handleKeydown(e: KeyboardEvent) {
@@ -52,34 +109,52 @@ export default defineComponent({
       // If the key is "Backspace" for example, then the next char won't be NaN
       const valid = isNaN(key.charCodeAt(1)) && key.charCodeAt(0);
 
-      if (valid) this.lines[this.activeLine] += key;
+      if (key === "}" || key === ")") {
+        // If the next char is a closing bracket and you have a phantom bracket, then move the position over instead of adding a new bracket
+        if (!(this.lines[this.activeLine][this.linePosition] === key && this.phantomBracket)) return;
+
+        this.linePosition += 1;
+        this.phantomBracket = false;
+
+        return; // Prevent the extra bracket from being added
+      }
+
+      if (valid) {
+        // this.lines[this.activeLine] += key;
+        this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
+        this.linePosition += 1;
+      }
 
       // Add extra brackets
-      if (key === "(") this.lines[this.activeLine] += ")";
-      if (key === "{") this.lines[this.activeLine] += "}";
+      if (key === "(") {
+        this.lines[this.activeLine] += ")";
+        this.phantomBracket = true;
+      }
+
+      if (key === "{") {
+        this.lines[this.activeLine] += "}";
+        this.phantomBracket = true;
+      }
 
       // Check for special keys
       if (key === "Enter") {
         this.lines.splice(this.activeLine + 1, 0, "");
+        this.linePosition = 0;
         this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
       } else if (key === "ArrowDown") this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
       else if (key === "ArrowUp") this.activeLine = Math.max(this.activeLine - 1, 0);
-      else if (key === "Backspace") {
-        this.lines[this.activeLine] = this.lines[this.activeLine].slice(0, -1);
-
-        // If the line is empty, then delete it
-        if (this.lines[this.activeLine] === "") {
-          if (this.lines.length > 1) {
-            this.lines.splice(this.activeLine, 1);
-            this.activeLine = Math.max(this.activeLine - 1, 0);
-          }
-        }
-      } else if (key === "Tab") this.lines[this.activeLine] += "    ";
+      else if (key === "ArrowLeft") this.linePosition = Math.max(this.linePosition - 1, 0);
+      else if (key === "ArrowRight")
+        this.linePosition = Math.min(this.linePosition + 1, this.lines[this.activeLine].length);
+      else if (key === "Backspace") this.handleBackspace();
+      else if (key === "Delete") this.handleDelete();
+      else if (key === "Tab") this.lines[this.activeLine] += "    ";
     },
   },
 
   components: {
     ScriptLine,
+    TextCursor,
   },
 
   computed: {

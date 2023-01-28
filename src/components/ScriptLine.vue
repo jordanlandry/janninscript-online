@@ -122,7 +122,7 @@ export default defineComponent({
   props: {
     text: String,
     activeLine: Boolean,
-    lineNumber: Number,
+    lineNumber: Number as () => number,
     setActiveLine: Function,
   },
 
