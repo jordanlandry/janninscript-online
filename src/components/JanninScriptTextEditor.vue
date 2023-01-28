@@ -10,50 +10,14 @@
 
   <div class="text-editor">
     <!-- <div class="line" :class="{ 'line-select': activeLine === 1 }" @click="setActiveLine(1)"> -->
-    <ScriptLine text="Hello" :activeLine="activeLine === 1" :lineNumber="1" @setActiveLine="setActiveLine" />
-    <ScriptLine text="Hello" :activeLine="activeLine === 2" :lineNumber="2" @setActiveLine="setActiveLine" />
-    <ScriptLine text="Hello" :activeLine="activeLine === 3" :lineNumber="3" @setActiveLine="setActiveLine" />
-    <ScriptLine text="Hello" :activeLine="activeLine === 4" :lineNumber="4" @setActiveLine="setActiveLine" />
-    <ScriptLine text="Hello" :activeLine="activeLine === 5" :lineNumber="5" @setActiveLine="setActiveLine" />
-
-    <!-- <div class="line-number">1</div>
-      <div class="line-content">
-        <span class="operator">for (</span>
-
-        <span class="keyword">var </span>
-        <span class="variable"> i</span>
-        <span class="operator"> = </span>
-        <span class="value"> 0</span>
-        <span class="grey">; </span>
-        <span class="variable"> i</span>
-        <span class="operator">{{ " < " }}</span>
-        <span class="value"> 10</span>
-        <span class="grey">; </span>
-        <span class="variable"> i</span>
-        <span class="operator">++</span>
-        <span class="operator">)</span>
-
-        <span class="grey"> {</span>
-      </div>
-    </div>
-    <div class="line" :class="{ 'line-select': activeLine === 2 }" @click="setActiveLine(2)">
-      <div class="line-number">2</div>
-      <div class="line-content">
-        <span class="variable">console.</span>
-        <span class="function">log</span>
-        <span class="operator">(</span>
-        <span class="variable">i</span>
-        <span class="operator">)</span>
-        <span class="grey">;</span>
-      </div>
-    </div>
-
-    <div class="line" :class="{ 'line-select': activeLine === 3 }" @mousedown="setActiveLine(3)">
-      <div class="line-number">3</div>
-      <div class="line-content">
-        <span class="grey">}</span>
-      </div>
-    </div> -->
+    <ScriptLine
+      text="for (var i = 0; i < 10; i++) {"
+      :activeLine="activeLine === 1"
+      :lineNumber="1"
+      @setActiveLine="setActiveLine"
+    />
+    <ScriptLine text="print(i);" :activeLine="activeLine === 2" :lineNumber="2" @setActiveLine="setActiveLine" />
+    <ScriptLine text="}" :activeLine="activeLine === 3" :lineNumber="3" @setActiveLine="setActiveLine" />
   </div>
 </template>
 
