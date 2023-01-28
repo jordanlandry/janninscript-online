@@ -16,7 +16,7 @@
       :lineNumber="1"
       @setActiveLine="setActiveLine"
     />
-    <ScriptLine text="print(i);" :activeLine="activeLine === 2" :lineNumber="2" @setActiveLine="setActiveLine" />
+    <ScriptLine text="    print(i);" :activeLine="activeLine === 2" :lineNumber="2" @setActiveLine="setActiveLine" />
     <ScriptLine text="}" :activeLine="activeLine === 3" :lineNumber="3" @setActiveLine="setActiveLine" />
   </div>
 </template>
@@ -93,5 +93,7 @@ export default defineComponent({
   flex-direction: column;
   min-height: 100vh;
   user-select: none;
+
+  font-size: 16px;
 }
 </style>

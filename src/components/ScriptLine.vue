@@ -11,8 +11,11 @@
 </template>
 
 <script lang="ts">
-import { COMPARISON_BINARY_OPERATORS } from "@babel/types";
 import { defineComponent } from "vue";
+
+interface StringKeyObject {
+  [key: string]: string;
+}
 
 export default defineComponent({
   data() {
@@ -35,7 +38,8 @@ export default defineComponent({
         "(": "operator",
         ")": "operator",
         ",": "grey",
-      },
+        " ": "space",
+      } as StringKeyObject,
     };
   },
 
@@ -166,5 +170,10 @@ export default defineComponent({
 
 .grey {
   color: rgb(100, 100, 100);
+}
+
+.space {
+  margin-left: 9.61px; /* 1 space */
+  font-size: 0;
 }
 </style>
