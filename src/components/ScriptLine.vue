@@ -49,15 +49,18 @@ export default defineComponent({
     },
 
     parseLine(text: string | undefined) {
+      let index = 0;
       interface Token {
         key: number;
         text: string;
         className: string;
+        index: number;
       }
 
       const res: Token[] = [];
       let currentWord = "";
       for (let i = 0; i < text!.length; i++) {
+        index++;
         const char = text![i];
 
         // Make the whole line grey if it starts with a comment
@@ -68,6 +71,7 @@ export default defineComponent({
               key: i,
               text: text!.slice(i),
               className: "grey",
+              index,
             });
           }
         }
@@ -93,6 +97,7 @@ export default defineComponent({
             key: i,
             text: currentWord,
             className: className,
+            index,
           });
 
           currentWord = "";
@@ -102,6 +107,7 @@ export default defineComponent({
             key: i,
             text: char,
             className: this.keywords[char] || "variable",
+            index,
           });
         } else currentWord += char; // Continue the word
       }
@@ -111,6 +117,7 @@ export default defineComponent({
           key: text!.length,
           text: currentWord,
           className: this.keywords[currentWord] || "variable",
+          index,
         });
       }
 

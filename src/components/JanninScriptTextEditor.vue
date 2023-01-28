@@ -10,14 +10,13 @@
 
   <div class="text-editor" @keydown="(e) => handleKeydown(e)" tabindex="-1">
     <TextCursor :linePosition="linePosition" :activeLine="activeLine" />
-    <div v-for="(line, index) in lines" :key="index">
+    <div v-for="(line, index) in lines" v-bind:key="index * Math.random()">
       <ScriptLine :text="line" :activeLine="activeLine === index" :lineNumber="index" @setActiveLine="setActiveLine" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { tSParenthesizedType } from "@babel/types";
 import { defineComponent } from "vue";
 import ScriptLine from "./ScriptLine.vue";
 import TextCursor from "./TextCursor.vue";
@@ -62,6 +61,8 @@ export default defineComponent({
         if (this.lines.length > 1) {
           this.lines.splice(this.activeLine, 1);
           this.activeLine = Math.max(this.activeLine - 1, 0);
+
+          this.linePosition = this.lines[this.activeLine].length + 1; // End of new current line
         }
       }
 
@@ -70,10 +71,6 @@ export default defineComponent({
 
     handleDelete() {
       const line = this.lines[this.activeLine];
-      // this.lines[this.activeLine] = this.lines[this.activeLine].slice(this.linePosition, 1);
-
-      // Filter out the character at the line position, basically running
-      // line.filter((char:string, index:number) => index !== this.linePosition); on a string
       let newStr = "";
       for (let i = 0; i < line.length; i++) {
         if (i === this.linePosition) continue;
@@ -111,7 +108,10 @@ export default defineComponent({
 
       if (key === "}" || key === ")") {
         // If the next char is a closing bracket and you have a phantom bracket, then move the position over instead of adding a new bracket
-        if (!(this.lines[this.activeLine][this.linePosition] === key && this.phantomBracket)) return;
+        if (!(this.lines[this.activeLine][this.linePosition] === key && this.phantomBracket)) {
+          this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
+          return;
+        }
 
         this.linePosition += 1;
         this.phantomBracket = false;
@@ -138,7 +138,14 @@ export default defineComponent({
 
       // Check for special keys
       if (key === "Enter") {
-        this.lines.splice(this.activeLine + 1, 0, "");
+        // this.lines.splice(this.activeLine + 1, 0, "");
+
+        // Move everything to the right of the linePosition to the next line
+        const newLine = this.lines[this.activeLine].slice(this.linePosition);
+        this.lines[this.activeLine] = this.lines[this.activeLine].slice(0, this.linePosition);
+
+        this.lines.splice(this.activeLine + 1, 0, newLine);
+
         this.linePosition = 0;
         this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
       } else if (key === "ArrowDown") this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
@@ -148,7 +155,10 @@ export default defineComponent({
         this.linePosition = Math.min(this.linePosition + 1, this.lines[this.activeLine].length);
       else if (key === "Backspace") this.handleBackspace();
       else if (key === "Delete") this.handleDelete();
-      else if (key === "Tab") this.lines[this.activeLine] += "    ";
+      else if (key === "Tab") {
+        this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, "    ");
+        this.linePosition += 4;
+      }
     },
   },
 
