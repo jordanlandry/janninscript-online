@@ -1,6 +1,6 @@
 <template>
   <div class="line" :class="{ 'line-select': activeLine }" @mousedown="updateLine(lineNumber)">
-    <div class="line-number">{{ lineNumber }}</div>
+    <div class="line-number">{{ lineNumber + 1 }}</div>
     <div class="line-content"></div>
     <div class="line-content">
       <span v-for="token in parseLine(text)" :class="token.className" :key="token.key">

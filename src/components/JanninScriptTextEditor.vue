@@ -8,16 +8,10 @@
     </div>
   </div>
 
-  <div class="text-editor">
-    <!-- <div class="line" :class="{ 'line-select': activeLine === 1 }" @click="setActiveLine(1)"> -->
-    <ScriptLine
-      text="for (var i = 0; i < 10; i++) {"
-      :activeLine="activeLine === 1"
-      :lineNumber="1"
-      @setActiveLine="setActiveLine"
-    />
-    <ScriptLine text="    print(i);" :activeLine="activeLine === 2" :lineNumber="2" @setActiveLine="setActiveLine" />
-    <ScriptLine text="}" :activeLine="activeLine === 3" :lineNumber="3" @setActiveLine="setActiveLine" />
+  <div class="text-editor" @keydown="(e) => handleKeydown(e)" tabindex="-1">
+    <div v-for="(line, index) in lines" :key="index">
+      <ScriptLine :text="line" :activeLine="activeLine === index" :lineNumber="index" @setActiveLine="setActiveLine" />
+    </div>
   </div>
 </template>
 
@@ -25,10 +19,15 @@
 import { defineComponent } from "vue";
 import ScriptLine from "./ScriptLine.vue";
 
+interface KeyStringObject {
+  [key: string]: string;
+}
+
 export default defineComponent({
   data() {
     return {
       activeLine: 0,
+      lines: [""],
     };
   },
 
@@ -36,21 +35,54 @@ export default defineComponent({
     setActiveLine(line: number) {
       this.activeLine = line;
     },
+
     increment() {
       this.activeLine += 1;
     },
+
     decrement() {
       this.activeLine -= 1;
+    },
+
+    handleKeydown(e: KeyboardEvent) {
+      const { key } = e;
+
+      e.preventDefault();
+
+      // If the key is "Backspace" for example, then the next char won't be NaN
+      const valid = isNaN(key.charCodeAt(1)) && key.charCodeAt(0);
+
+      if (valid) this.lines[this.activeLine] += key;
+
+      // Check for special keys
+      if (key === "Enter") {
+        this.lines.push("");
+        this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
+      } else if (key === "ArrowDown") this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
+      else if (key === "ArrowUp") this.activeLine = Math.max(this.activeLine - 1, 0);
+      else if (key === "Backspace") {
+        this.lines[this.activeLine] = this.lines[this.activeLine].slice(0, -1);
+
+        // If the line is empty, then delete it
+        if (this.lines[this.activeLine] === "") {
+          if (this.lines.length > 1) {
+            this.lines.splice(this.activeLine, 1);
+            this.activeLine = Math.max(this.activeLine - 1, 0);
+          }
+        }
+      } else if (key === "Tab") this.lines[this.activeLine] += "    ";
     },
   },
 
   components: {
     ScriptLine,
   },
-  name: "JanninScriptTextEditor",
-  props: {
-    msg: String,
+
+  computed: {
+    console: () => console,
   },
+
+  name: "JanninScriptTextEditor",
 });
 </script>
 
