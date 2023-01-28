@@ -54,9 +54,13 @@ export default defineComponent({
 
       if (valid) this.lines[this.activeLine] += key;
 
+      // Add extra brackets
+      if (key === "(") this.lines[this.activeLine] += ")";
+      if (key === "{") this.lines[this.activeLine] += "}";
+
       // Check for special keys
       if (key === "Enter") {
-        this.lines.push("");
+        this.lines.splice(this.activeLine + 1, 0, "");
         this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
       } else if (key === "ArrowDown") this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
       else if (key === "ArrowUp") this.activeLine = Math.max(this.activeLine - 1, 0);
