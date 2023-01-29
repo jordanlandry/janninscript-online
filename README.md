@@ -42,6 +42,16 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - Add the text to localstorage
 
+- Only show cursor and type when focused on the text area
+
+- When you press enter and a phantom curly bracket is there put it on a new line
+
+- Add autotab
+
+- Fix syntax highlighting when it's inside of a string
+
+- Add Themes
+
 - Please for the love of god refactor
 
 Add the following keybinds
@@ -53,3 +63,5 @@ All Arrow keybinds do the action in the direction of the arrow
 | Ctrl + L / R Arrow | Move position by entire word |
 | Alt + Arrow        | Swaps lines                  |
 | Shift + Arrow      | Select letter                |
+| Ctrl + A           | Select All                   |
+| Ctr + S            | Run                          |

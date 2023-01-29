@@ -49,6 +49,16 @@ export default defineComponent({
       this.activeLine = line;
     },
 
+    getTabSize(lineNumber: number) {
+      let tabSize = 0;
+      for (let i = 0; i < this.lines[lineNumber].length; i++) {
+        if (this.lines[lineNumber][i] === " ") tabSize++;
+        else break;
+      }
+
+      return tabSize;
+    },
+
     handleBackspace() {
       const line = this.lines[this.activeLine];
 
@@ -150,16 +160,18 @@ export default defineComponent({
 
       // Check for special keys
       if (key === "Enter") {
-        // this.lines.splice(this.activeLine + 1, 0, "");
-
         // Move everything to the right of the linePosition to the next line
         const newLine = this.lines[this.activeLine].slice(this.linePosition);
         this.lines[this.activeLine] = this.lines[this.activeLine].slice(0, this.linePosition);
 
         this.lines.splice(this.activeLine + 1, 0, newLine);
 
-        this.linePosition = 0;
+        const tabSize = this.getTabSize(this.activeLine);
+
+        // this.linePosition = 0;
         this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
+        this.lines[this.activeLine] = " ".repeat(tabSize) + this.lines[this.activeLine];
+        this.linePosition = tabSize;
       } else if (key === "ArrowDown") {
         this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
         this.linePosition = Math.min(this.linePosition, this.lines[this.activeLine].length); // Don't go past the end of the line
