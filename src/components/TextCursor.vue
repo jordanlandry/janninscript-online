@@ -5,6 +5,7 @@
       position: 'absolute',
       top: activeLine * lineHeight + headerHeight + 'px',
       left: (linePosition + 1) * letterSize + lineNumberWidth + 'px',
+      opacity: counter >= maxCounter ? 0 : 1,
     }"
   ></div>
 </template>
@@ -15,13 +16,43 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "TextCursor",
 
+  watch: {
+    counter: function (newVal: number) {
+      if (newVal >= this.maxCounter * 2) this.counter = 0;
+    },
+  },
+
+  methods: {
+    resetBlink() {
+      this.counter = 0;
+    },
+  },
+
+  mounted() {
+    window.addEventListener("keydown", this.resetBlink);
+
+    this.interval = setInterval(() => {
+      this.counter += this.maxCounter / 2;
+    }, this.maxCounter / 2);
+  },
+
+  unmounted() {
+    window.addEventListener("keydown", this.resetBlink);
+
+    clearInterval(this.interval);
+  },
+
   data() {
     return {
-      // All in px
       lineHeight: 24,
       headerHeight: 52,
       letterSize: 9.62,
       lineNumberWidth: 24,
+
+      counter: 0,
+      maxCounter: 500,
+
+      interval: 0,
     };
   },
 
@@ -38,10 +69,10 @@ export default defineComponent({
   width: 1px;
   height: 1.5rem;
   background-color: #fff;
-  animation: blink 1s infinite;
+  /* animation: blink 1s infinite; */
 }
 
-@keyframes blink {
+/* @keyframes blink {
   0% {
     opacity: 0;
   }
@@ -57,5 +88,5 @@ export default defineComponent({
   100% {
     opacity: 0;
   }
-}
+} */
 </style>
