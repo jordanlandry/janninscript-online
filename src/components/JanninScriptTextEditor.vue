@@ -17,9 +17,12 @@
 </template>
 
 <script lang="ts">
+import { handleKeybind, preventDefaultKeys } from "@/keybinds";
 import { defineComponent } from "vue";
 import ScriptLine from "./ScriptLine.vue";
 import TextCursor from "./TextCursor.vue";
+// import handleKeybind from "../keybinds";
+// import preventDefaultKeys from "../keybinds";
 
 interface KeyStringObject {
   [key: string]: string;
@@ -49,67 +52,6 @@ export default defineComponent({
       this.activeLine = line;
     },
 
-    getTabSize(lineNumber: number) {
-      let tabSize = 0;
-      for (let i = 0; i < this.lines[lineNumber].length; i++) {
-        if (this.lines[lineNumber][i] === " ") tabSize++;
-        else break;
-      }
-
-      return tabSize;
-    },
-
-    handleBackspace() {
-      const line = this.lines[this.activeLine];
-
-      // Filter out the character at the line position, basically running
-      // line.filter((char:string, index:number) => index !== this.linePosition); on a string
-
-      let newStr = "";
-      for (let i = 0; i < line.length; i++) {
-        if (i === this.linePosition - 1) continue;
-
-        newStr += line[i];
-      }
-
-      this.lines[this.activeLine] = newStr;
-
-      // If the line position is 0, we need to merge the current line with the previous line
-      if (this.linePosition === 0) {
-        if (this.activeLine === 0) return;
-
-        const prevLength = this.lines[this.activeLine - 1].length;
-
-        this.lines[this.activeLine - 1] += this.lines[this.activeLine];
-        this.lines.splice(this.activeLine, 1);
-
-        this.linePosition = prevLength;
-
-        this.activeLine--;
-      } else this.linePosition--;
-    },
-
-    handleDelete() {
-      const line = this.lines[this.activeLine];
-
-      let newStr = "";
-      for (let i = 0; i < line.length; i++) {
-        if (i === this.linePosition) continue;
-
-        newStr += line[i];
-      }
-
-      this.lines[this.activeLine] = newStr;
-
-      // If the line position is the same as the length of the line, we need to merge the current line with the next line
-      if (this.linePosition === line.length) {
-        if (this.activeLine === this.lines.length - 1) return;
-
-        this.lines[this.activeLine] += this.lines[this.activeLine + 1];
-        this.lines.splice(this.activeLine + 1, 1);
-      }
-    },
-
     spliceSlice(str: string, index: number, count: number, add: string) {
       if (index < 0) {
         index = str.length + index;
@@ -122,13 +64,14 @@ export default defineComponent({
     handleKeydown(e: KeyboardEvent) {
       const { key } = e;
 
-      e.preventDefault();
-
       // If the key is "Backspace" for example, then the next char won't be NaN
       const valid = isNaN(key.charCodeAt(1)) && key.charCodeAt(0);
 
+      if (preventDefaultKeys.has(key)) e.preventDefault();
+
+      // --- Handle Bracket AutoComplete --- \\
+      // If the next char is a closing bracket and you have a phantom bracket, then move the position over instead of adding a new bracket
       if (key === "}" || key === ")") {
-        // If the next char is a closing bracket and you have a phantom bracket, then move the position over instead of adding a new bracket
         if (!(this.lines[this.activeLine][this.linePosition] === key && this.phantomBracket)) {
           this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
           this.linePosition++;
@@ -139,12 +82,6 @@ export default defineComponent({
         this.phantomBracket--;
 
         return; // Prevent the extra bracket from being added
-      }
-
-      if (valid) {
-        // this.lines[this.activeLine] += key;
-        this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
-        this.linePosition += 1;
       }
 
       // Add extra brackets
@@ -158,36 +95,23 @@ export default defineComponent({
         this.phantomBracket++;
       }
 
-      // Check for special keys
-      if (key === "Enter") {
-        // Move everything to the right of the linePosition to the next line
-        const newLine = this.lines[this.activeLine].slice(this.linePosition);
-        this.lines[this.activeLine] = this.lines[this.activeLine].slice(0, this.linePosition);
+      // If it's a valid key type it on the screen, else check for keybinds
+      if (!valid) {
+        const newProps = handleKeybind(e, {
+          lines: this.lines,
+          activeLine: this.activeLine,
+          linePosition: this.linePosition,
+          phantomBracket: this.phantomBracket,
+        });
 
-        this.lines.splice(this.activeLine + 1, 0, newLine);
-
-        const tabSize = this.getTabSize(this.activeLine);
-
-        // this.linePosition = 0;
-        this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
-        this.lines[this.activeLine] = " ".repeat(tabSize) + this.lines[this.activeLine];
-        this.linePosition = tabSize;
-      } else if (key === "ArrowDown") {
-        this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
-        this.linePosition = Math.min(this.linePosition, this.lines[this.activeLine].length); // Don't go past the end of the line
-      } else if (key === "ArrowUp") {
-        this.activeLine = Math.max(this.activeLine - 1, 0);
-        this.linePosition = Math.min(this.linePosition, this.lines[this.activeLine].length); // Prevents the cursor from going past the end of the line
-      } else if (key === "ArrowLeft") this.linePosition = Math.max(this.linePosition - 1, 0);
-      else if (key === "ArrowRight")
-        this.linePosition = Math.min(this.linePosition + 1, this.lines[this.activeLine].length);
-      else if (key === "Backspace") this.handleBackspace();
-      else if (key === "Delete") this.handleDelete();
-      else if (key === "Tab") {
-        this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, "    ");
-        this.linePosition += 4;
-      } else if (key === "Home") this.linePosition = 0;
-      else if (key === "End") this.linePosition = this.lines[this.activeLine].length;
+        this.lines = newProps?.lines ?? this.lines;
+        this.activeLine = newProps?.activeLine ?? this.activeLine;
+        this.linePosition = newProps?.linePosition ?? this.linePosition;
+        this.phantomBracket = newProps?.phantomBracket ?? this.phantomBracket;
+      } else {
+        this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
+        this.linePosition += 1;
+      }
     },
   },
 

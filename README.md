@@ -52,7 +52,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - Add Themes
 
-- Please for the love of god refactor
+- Make cursor only blink when you're not typing, and when you hit a key it reshows up...Probably just have a countdown and reset it everytime a key is pressed.
 
 Add the following keybinds
 All Arrow keybinds do the action in the direction of the arrow
