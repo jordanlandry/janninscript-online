@@ -1,24 +1,57 @@
 # janninscript-online
 
 ## Project setup
+
 ```
 npm install
 ```
 
 ### Compiles and hot-reloads for development
+
 ```
 npm run serve
 ```
 
 ### Compiles and minifies for production
+
 ```
 npm run build
 ```
 
 ### Lints and fixes files
+
 ```
 npm run lint
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### TODO List
+
+- Add a current max line position, ex when moving from a line on position 10, down to an empty line, then moving back up to the other line, it should bring you back to position 10.
+
+- Add text select
+
+- Set line position on click
+
+- Add copying and pasting
+
+- Change the prevent default to only specific keybinds
+
+- Add the text to localstorage
+
+- Fix delete to work the same as backspace
+
+- Please for the love of god refactor
+
+Add the following keybinds
+All Arrow keybinds do the action in the direction of the arrow
+
+| Keybind            | Function                     |
+| ------------------ | ---------------------------- |
+| Ctrl + Backspace   | Remove entire Word           |
+| Ctrl + L / R Arrow | Move position by entire word |
+| Alt + Arrow        | Swaps lines                  |
+| Shift + Arrow      | Select letter                |

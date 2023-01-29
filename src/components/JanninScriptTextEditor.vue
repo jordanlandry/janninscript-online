@@ -54,6 +54,7 @@ export default defineComponent({
 
       // Filter out the character at the line position, basically running
       // line.filter((char:string, index:number) => index !== this.linePosition); on a string
+
       let newStr = "";
       for (let i = 0; i < line.length; i++) {
         if (i === this.linePosition - 1) continue;
