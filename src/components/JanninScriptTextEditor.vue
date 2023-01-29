@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <div class="text-editor" @keydown="(e) => handleKeydown(e)" tabindex="-1">
+  <div class="text-editor" tabindex="-1">
     <TextCursor :linePosition="linePosition" :activeLine="activeLine" />
     <div v-for="(line, index) in lines" v-bind:key="index * Math.random()">
       <ScriptLine :text="line" :activeLine="activeLine === index" :lineNumber="index" @setActiveLine="setActiveLine" />
@@ -32,8 +32,16 @@ export default defineComponent({
       linePosition: 0,
       lines: [""],
 
-      phantomBracket: false,
+      phantomBracket: 0,
     };
+  },
+
+  mounted() {
+    window.addEventListener("keydown", (e) => this.handleKeydown(e));
+  },
+
+  unmounted() {
+    window.removeEventListener("keydown", (e) => this.handleKeydown(e));
   },
 
   methods: {
@@ -43,7 +51,6 @@ export default defineComponent({
 
     handleBackspace() {
       const line = this.lines[this.activeLine];
-      // this.lines[this.activeLine] = this.lines[this.activeLine].slice(this.linePosition, 1);
 
       // Filter out the character at the line position, basically running
       // line.filter((char:string, index:number) => index !== this.linePosition); on a string
@@ -56,17 +63,19 @@ export default defineComponent({
 
       this.lines[this.activeLine] = newStr;
 
-      // If the line is empty, then delete it
-      if (this.lines[this.activeLine] === "") {
-        if (this.lines.length > 1) {
-          this.lines.splice(this.activeLine, 1);
-          this.activeLine = Math.max(this.activeLine - 1, 0);
+      // If the line position is 0, we need to merge the current line with the previous line
+      if (this.linePosition === 0) {
+        if (this.activeLine === 0) return;
 
-          this.linePosition = this.lines[this.activeLine].length + 1; // End of new current line
-        }
-      }
+        const prevLength = this.lines[this.activeLine - 1].length;
 
-      this.linePosition = Math.max(this.linePosition - 1, 0);
+        this.lines[this.activeLine - 1] += this.lines[this.activeLine];
+        this.lines.splice(this.activeLine, 1);
+
+        this.linePosition = prevLength;
+
+        this.activeLine--;
+      } else this.linePosition--;
     },
 
     handleDelete() {
@@ -110,11 +119,12 @@ export default defineComponent({
         // If the next char is a closing bracket and you have a phantom bracket, then move the position over instead of adding a new bracket
         if (!(this.lines[this.activeLine][this.linePosition] === key && this.phantomBracket)) {
           this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
+          this.linePosition++;
           return;
         }
 
-        this.linePosition += 1;
-        this.phantomBracket = false;
+        this.linePosition++;
+        this.phantomBracket--;
 
         return; // Prevent the extra bracket from being added
       }
@@ -128,12 +138,12 @@ export default defineComponent({
       // Add extra brackets
       if (key === "(") {
         this.lines[this.activeLine] += ")";
-        this.phantomBracket = true;
+        this.phantomBracket++;
       }
 
       if (key === "{") {
         this.lines[this.activeLine] += "}";
-        this.phantomBracket = true;
+        this.phantomBracket++;
       }
 
       // Check for special keys
@@ -148,9 +158,13 @@ export default defineComponent({
 
         this.linePosition = 0;
         this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
-      } else if (key === "ArrowDown") this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
-      else if (key === "ArrowUp") this.activeLine = Math.max(this.activeLine - 1, 0);
-      else if (key === "ArrowLeft") this.linePosition = Math.max(this.linePosition - 1, 0);
+      } else if (key === "ArrowDown") {
+        this.activeLine = Math.min(this.activeLine + 1, this.lines.length - 1);
+        this.linePosition = Math.min(this.linePosition, this.lines[this.activeLine].length); // Don't go past the end of the line
+      } else if (key === "ArrowUp") {
+        this.activeLine = Math.max(this.activeLine - 1, 0);
+        this.linePosition = Math.min(this.linePosition, this.lines[this.activeLine].length); // Prevents the cursor from going past the end of the line
+      } else if (key === "ArrowLeft") this.linePosition = Math.max(this.linePosition - 1, 0);
       else if (key === "ArrowRight")
         this.linePosition = Math.min(this.linePosition + 1, this.lines[this.activeLine].length);
       else if (key === "Backspace") this.handleBackspace();
@@ -158,7 +172,8 @@ export default defineComponent({
       else if (key === "Tab") {
         this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, "    ");
         this.linePosition += 4;
-      }
+      } else if (key === "Home") this.linePosition = 0;
+      else if (key === "End") this.linePosition = this.lines[this.activeLine].length;
     },
   },
 
