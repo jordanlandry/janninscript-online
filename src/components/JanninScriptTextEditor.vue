@@ -35,9 +35,26 @@ export default defineComponent({
       linePosition: 0,
       lines: [""],
 
+      // When you use arrow keys, this is the max position to the right it should go based on previous positions
+      currentMaxPosition: 0,
+
       phantomBracket: 0,
     };
   },
+
+  watch: {
+    activeLine: function (newVal: number) {
+      this.linePosition = Math.min(this.currentMaxPosition, this.lines[newVal].length);
+    },
+  },
+
+  //   linePosition: function (newVal: number, prevVal: number) {
+  //     if (newVal > this.currentMaxPosition) this.currentMaxPosition = newVal;
+  //     else if (newVal < prevVal) this.currentMaxPosition = prevVal;
+
+  //     if (newVal > this.currentMaxPosition) this.currentMaxPosition = newVal;
+  //   },
+  // },
 
   mounted() {
     window.addEventListener("keydown", (e) => this.handleKeydown(e));
@@ -67,7 +84,10 @@ export default defineComponent({
       // If the key is "Backspace" for example, then the next char won't be NaN
       const valid = isNaN(key.charCodeAt(1)) && key.charCodeAt(0);
 
-      if (preventDefaultKeys.has(key)) e.preventDefault();
+      // Prevent default
+      if (e.ctrlKey) {
+        if (preventDefaultKeys.ctrl.has(key)) e.preventDefault();
+      } else if (preventDefaultKeys.normal.has(key)) e.preventDefault();
 
       // --- Handle Bracket AutoComplete --- \\
       // If the next char is a closing bracket and you have a phantom bracket, then move the position over instead of adding a new bracket
@@ -102,13 +122,18 @@ export default defineComponent({
           activeLine: this.activeLine,
           linePosition: this.linePosition,
           phantomBracket: this.phantomBracket,
+          currentMaxPosition: this.currentMaxPosition,
         });
 
         this.lines = newProps?.lines ?? this.lines;
         this.activeLine = newProps?.activeLine ?? this.activeLine;
         this.linePosition = newProps?.linePosition ?? this.linePosition;
         this.phantomBracket = newProps?.phantomBracket ?? this.phantomBracket;
+        this.currentMaxPosition = newProps?.currentMaxPosition ?? this.currentMaxPosition;
       } else {
+        this.currentMaxPosition = this.linePosition + 1;
+
+        // Add the key to the line
         this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
         this.linePosition += 1;
       }

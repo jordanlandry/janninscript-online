@@ -3,6 +3,7 @@ interface Props {
   activeLine: number;
   linePosition: number;
   phantomBracket: number;
+  currentMaxPosition: number;
 }
 
 function getTabSize(lineNumber: number, lines: string[]) {
@@ -114,6 +115,8 @@ const arrowLeft = (props: Props) => {
     props.linePosition = props.lines[props.activeLine].length;
   } else props.linePosition--;
 
+  props.currentMaxPosition = props.linePosition;
+
   return props;
 };
 
@@ -124,6 +127,8 @@ const arrowRight = (props: Props) => {
     props.activeLine++;
     props.linePosition = 0;
   } else props.linePosition++;
+
+  props.currentMaxPosition = props.linePosition;
 
   return props;
 };
@@ -154,8 +159,12 @@ const arrowDown = (props: Props) => {
   return props;
 };
 
-const home = (props: Props) => ({ ...props, linePosition: 0 });
-const end = (props: Props) => ({ ...props, linePosition: props.lines[props.activeLine].length });
+const home = (props: Props) => ({ ...props, linePosition: 0, currentMaxPosition: 0 });
+const end = (props: Props) => ({
+  ...props,
+  linePosition: props.lines[props.activeLine].length,
+  currentMaxPosition: props.lines[props.activeLine].length,
+});
 
 export function handleKeybind(e: KeyboardEvent, props: Props) {
   if (e.key === "Backspace") return backspace(props);
@@ -171,13 +180,7 @@ export function handleKeybind(e: KeyboardEvent, props: Props) {
   else return props;
 }
 
-export const preventDefaultKeys = new Set([
-  " ",
-  "End",
-  "Home",
-  "ArrowLeft",
-  "ArrowRight",
-  "ArrowUp",
-  "ArrowDown",
-  "Tab",
-]);
+export const preventDefaultKeys = {
+  normal: new Set([" ", "End", "Home", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Tab"]),
+  ctrl: new Set(["c", "v", "x", "a"]),
+};

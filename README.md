@@ -28,10 +28,6 @@ npm run lint
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### TODO List
-
-- Add a current max line position, ex when moving from a line on position 10, down to an empty line, then moving back up to the other line, it should bring you back to position 10.
-
 - Add text select
 
 - Set line position on click
@@ -53,6 +49,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - Add Themes
 
 - Make cursor only blink when you're not typing, and when you hit a key it reshows up...Probably just have a countdown and reset it everytime a key is pressed.
+
+- When you press the home button, I want it to only take you to where the indent is, or if you are already there, then take you to the beginning
 
 Add the following keybinds
 All Arrow keybinds do the action in the direction of the arrow
