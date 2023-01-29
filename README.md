@@ -42,8 +42,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - Add the text to localstorage
 
-- Fix delete to work the same as backspace
-
 - Please for the love of god refactor
 
 Add the following keybinds

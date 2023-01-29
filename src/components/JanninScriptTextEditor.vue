@@ -81,6 +81,7 @@ export default defineComponent({
 
     handleDelete() {
       const line = this.lines[this.activeLine];
+
       let newStr = "";
       for (let i = 0; i < line.length; i++) {
         if (i === this.linePosition) continue;
@@ -90,12 +91,12 @@ export default defineComponent({
 
       this.lines[this.activeLine] = newStr;
 
-      // If the line is empty, then delete it
-      if (this.lines[this.activeLine] === "") {
-        if (this.lines.length > 1) {
-          this.lines.splice(this.activeLine, 1);
-          this.activeLine = Math.max(this.activeLine - 1, 0);
-        }
+      // If the line position is the same as the length of the line, we need to merge the current line with the next line
+      if (this.linePosition === line.length) {
+        if (this.activeLine === this.lines.length - 1) return;
+
+        this.lines[this.activeLine] += this.lines[this.activeLine + 1];
+        this.lines.splice(this.activeLine + 1, 1);
       }
     },
 
