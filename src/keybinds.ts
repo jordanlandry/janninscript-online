@@ -141,6 +141,8 @@ const arrowUp = (props: Props) => {
   const line = props.lines[props.activeLine];
   const lineLength = line.length;
 
+  props.linePosition = Math.min(props.currentMaxPosition, lineLength);
+
   if (props.linePosition > lineLength) props.linePosition = lineLength;
 
   return props;
@@ -153,6 +155,8 @@ const arrowDown = (props: Props) => {
 
   const line = props.lines[props.activeLine];
   const lineLength = line.length;
+
+  props.linePosition = Math.min(props.currentMaxPosition, lineLength);
 
   if (props.linePosition > lineLength) props.linePosition = lineLength;
 

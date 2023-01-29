@@ -69,24 +69,5 @@ export default defineComponent({
   width: 1px;
   height: 1.5rem;
   background-color: #fff;
-  /* animation: blink 1s infinite; */
 }
-
-/* @keyframes blink {
-  0% {
-    opacity: 0;
-  }
-  49% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  99% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-} */
 </style>

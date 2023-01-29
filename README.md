@@ -48,8 +48,6 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 - Add Themes
 
-- Make cursor only blink when you're not typing, and when you hit a key it reshows up...Probably just have a countdown and reset it everytime a key is pressed.
-
 - When you press the home button, I want it to only take you to where the indent is, or if you are already there, then take you to the beginning
 
 Add the following keybinds

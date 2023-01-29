@@ -42,20 +42,6 @@ export default defineComponent({
     };
   },
 
-  watch: {
-    activeLine: function (newVal: number) {
-      this.linePosition = Math.min(this.currentMaxPosition, this.lines[newVal].length);
-    },
-  },
-
-  //   linePosition: function (newVal: number, prevVal: number) {
-  //     if (newVal > this.currentMaxPosition) this.currentMaxPosition = newVal;
-  //     else if (newVal < prevVal) this.currentMaxPosition = prevVal;
-
-  //     if (newVal > this.currentMaxPosition) this.currentMaxPosition = newVal;
-  //   },
-  // },
-
   mounted() {
     window.addEventListener("keydown", (e) => this.handleKeydown(e));
   },
@@ -66,6 +52,7 @@ export default defineComponent({
 
   methods: {
     setActiveLine(line: number) {
+      this.linePosition = Math.min(this.currentMaxPosition, this.lines[line].length);
       this.activeLine = line;
     },
 
