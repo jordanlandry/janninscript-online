@@ -1,5 +1,10 @@
 # JanninScript Online Compiler
 
+An online compiler of my programming language, JanninScript
+For info and syntax of JanninScript, see the [JanninScript Repo](https://github.com/jordanlandry/janninscript)
+
+[Try it out here!](https://jordanlandry.github.io/janninscript-online/)
+
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
