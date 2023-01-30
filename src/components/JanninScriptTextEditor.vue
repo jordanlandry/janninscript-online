@@ -78,7 +78,7 @@ export default defineComponent({
 
       // --- Handle Bracket AutoComplete --- \\
       // If the next char is a closing bracket and you have a phantom bracket, then move the position over instead of adding a new bracket
-      if (key === "}" || key === ")") {
+      if (key === "}" || key === ")" || key === "]") {
         if (!(this.lines[this.activeLine][this.linePosition] === key && this.phantomBracket)) {
           this.lines[this.activeLine] = this.spliceSlice(this.lines[this.activeLine], this.linePosition, 0, key);
           this.linePosition++;
@@ -99,6 +99,11 @@ export default defineComponent({
 
       if (key === "{") {
         this.lines[this.activeLine] += "}";
+        this.phantomBracket++;
+      }
+
+      if (key === "[") {
+        this.lines[this.activeLine] += "]";
         this.phantomBracket++;
       }
 

@@ -28,6 +28,8 @@ npm run lint
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+### Todo list
+
 - Add text select
 
 - Set line position on click

@@ -25,6 +25,11 @@ export default defineComponent({
         while: "operator",
         var: "keyword",
         fn: "keyword",
+        new: "keyword",
+        class: "keyword",
+        if: "operator",
+        else: "operator",
+        return: "keyword",
         "+": "operator",
         "=": "operator",
         "-": "operator",
@@ -33,10 +38,12 @@ export default defineComponent({
         "<": "operator",
         ">": "operator",
         ";": "grey",
-        "{": "grey",
-        "}": "grey",
-        "(": "operator",
-        ")": "operator",
+        "{": "operator",
+        "}": "operator",
+        "(": "keyword",
+        ")": "keyword",
+        "[": "value",
+        "]": "value",
         ",": "grey",
         " ": "space",
       } as StringKeyObject,
@@ -83,8 +90,15 @@ export default defineComponent({
           char === "(" ||
           char === ")" ||
           char === "+" ||
+          char === "-" ||
+          char === "*" ||
+          char === "/" ||
           char === "{" ||
-          char === "}"
+          char === "}" ||
+          char === '"' ||
+          char === "[" ||
+          char === "]" ||
+          char === ","
         ) {
           // Get className
           let className = "variable";
@@ -129,7 +143,7 @@ export default defineComponent({
   props: {
     text: String,
     activeLine: Boolean,
-    lineNumber: Number as () => number,
+    lineNumber: { type: Number, required: true },
     setActiveLine: Function,
   },
 
@@ -160,19 +174,23 @@ export default defineComponent({
 }
 
 .keyword {
-  color: rgb(75, 115, 123) !important;
+  color: #78dce8;
 }
 
 .operator {
-  color: rgb(140, 65, 85) !important;
+  color: #ff6188;
 }
 
 .value {
-  color: rgb(100, 100, 140);
+  color: #ab9df2;
 }
 
 .function {
-  color: rgb(100, 150, 115);
+  color: #a9dc76;
+}
+
+.string {
+  color: #ffd866;
 }
 
 .grey {
