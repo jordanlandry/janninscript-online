@@ -2,13 +2,17 @@
   <div class="ide-wrappers">
     <JanninScriptTextEditor @clicked="runBuild" />
     <div class="vertical-line"></div>
-    <CppText :text="text" />
+    <CppText :text="cppOutput" />
+  </div>
+  <div class="output-wrapper">
+    <JanninScriptOutput :text="jsOutput" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import JanninScriptTextEditor from "./components/JanninScriptTextEditor.vue";
+import JanninScriptOutput from "./components/JanninScriptOutput.vue";
 import CppText from "./components/CppText.vue";
 
 export default defineComponent({
@@ -19,19 +23,22 @@ export default defineComponent({
 
   data() {
     return {
-      text: "",
+      cppOutput: "",
+      jsOutput: "",
     };
   },
 
   methods: {
     runBuild(value: string) {
-      this.text = value;
+      this.cppOutput = value;
+      this.jsOutput = "Hello World!";
     },
   },
 
   components: {
     JanninScriptTextEditor,
     CppText,
+    JanninScriptOutput,
   },
 });
 </script>
@@ -54,6 +61,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   top: 0;
+  z-index: 1;
 }
 
 .ide-wrappers {

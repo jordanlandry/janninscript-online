@@ -30,9 +30,6 @@ import ScriptLine from "./ScriptLine.vue";
 import TextCursor from "./TextCursor.vue";
 import compile from "@/janninscript/compiler";
 
-// import handleKeybind from "../keybinds";
-// import preventDefaultKeys from "../keybinds";
-
 interface KeyStringObject {
   [key: string]: string;
 }

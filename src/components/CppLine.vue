@@ -1,13 +1,16 @@
 <template>
-  <div class="wrapper">
-    <span v-for="token in formatText(text)" :key="token.key" :class="token.className">
-      {{ token.text }}
-    </span>
+  <div>
+    <div class="wrapper">
+      <span v-for="token in formatText(text)" :key="token.key" :class="token.className">
+        {{ token.text }}
+      </span>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import nextId from "../helpers/nextId";
 
 export default defineComponent({
   name: "CppLine",
@@ -134,19 +137,16 @@ export default defineComponent({
     formatText(text: string) {
       let index = 0;
       interface Token {
-        key: number;
         text: string;
         className: string;
-        index: number;
+        key: number;
       }
 
       // Get words as array
       const words: string[] = [];
       let word = "";
 
-      if (text.length === 0) {
-        return [{ key: 0, text: " ", className: "line", index: 0 }];
-      }
+      if (text.length === 0) return [{ text: " ", className: "line", key: nextId() }];
 
       for (let i = 0; i < text.length; i++) {
         const char = text[i];
@@ -166,19 +166,15 @@ export default defineComponent({
 
       words.forEach((word, i) => {
         let className = "variable";
-        if (this.operators.has(word)) className = "operator";
+        if (word === " ") tokens.push({ text: " ", className: "space", key: nextId() });
+        else if (word === "\t") tokens.push({ text: "&nbsp&nbsp&nbsp&nbsp", className: "space", key: nextId() });
+        else if (this.operators.has(word)) className = "operator";
         else if (this.keywords.has(word)) className = "keyword";
         else if (this.brackets.has(word)) className = "operator";
         else if (this.punctuation.has(word)) className = "punctuation";
-        else if (word === " ") className = "space";
         else if (word === "\n") className = "line";
 
-        tokens.push({
-          text: word,
-          key: i,
-          index: i,
-          className,
-        });
+        tokens.push({ text: word, className, key: nextId() });
       });
 
       return tokens;
@@ -245,10 +241,5 @@ export default defineComponent({
 
 .grey {
   color: rgb(100, 100, 100);
-}
-
-.space {
-  margin-left: 9.61px; /* 1 space */
-  font-size: 0;
 }
 </style>

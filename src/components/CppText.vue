@@ -28,7 +28,6 @@ export default defineComponent({
       toggleShowBase: false,
       baseFile: "",
       file: "",
-
       totalFile: "",
     };
   },
