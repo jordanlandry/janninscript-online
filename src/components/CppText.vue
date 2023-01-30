@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" :style="{ height: height + 'px' }">
     <div class="header">
       <div>
         <p class="file-name">C++ Output</p>
@@ -29,7 +29,19 @@ export default defineComponent({
       baseFile: "",
       file: "",
       totalFile: "",
+
+      height: window.innerHeight - this.$props.outputTabHeight,
     };
+  },
+
+  mounted() {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("onfullscreenchange", this.handleResize);
+  },
+
+  unmounted() {
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("onfullscreenchange", this.handleResize);
   },
 
   watch: {
@@ -59,6 +71,10 @@ export default defineComponent({
   // created: function () {},
 
   methods: {
+    handleResize() {
+      this.height = window.innerHeight - this.$props.outputTabHeight;
+    },
+
     formatText(text: string) {
       const lines: string[] = text.split("\n");
       return lines;
@@ -74,6 +90,7 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    outputTabHeight: { type: Number, required: true },
   },
 
   components: {
@@ -88,6 +105,8 @@ export default defineComponent({
 }
 .wrapper {
   flex: 1;
+
+  overflow-y: auto;
 }
 
 .button-wrapper {

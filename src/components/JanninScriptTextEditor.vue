@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" :style="{ height: height + 'px' }">
     <div class="header">
       <div>
         <p class="file-name">Build.jannin</p>
@@ -43,6 +43,8 @@ export default defineComponent({
 
       // When you use arrow keys, this is the max position to the right it should go based on previous positions
       currentMaxPosition: 0,
+
+      height: window.innerHeight - this.$props.outputTabHeight,
 
       phantomBracket: 0,
     };
@@ -153,13 +155,19 @@ export default defineComponent({
     console: () => console,
   },
 
+  props: {
+    outputTabHeight: {
+      type: Number,
+      required: true,
+    },
+  },
+
   name: "JanninScriptTextEditor",
 });
 </script>
 
 <style scoped>
 .wrapper {
-  height: 100%;
   overflow-y: auto;
   flex: 1;
 }
@@ -201,7 +209,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   user-select: none;
-
   font-size: 16px;
 }
 </style>

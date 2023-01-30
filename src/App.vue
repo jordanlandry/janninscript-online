@@ -1,8 +1,8 @@
 <template>
-  <div class="ide-wrappers" :style="{ marginBottom: outputTabSize + 'px' }">
-    <JanninScriptTextEditor @clicked="runBuild" />
+  <div class="ide-wrappers">
+    <JanninScriptTextEditor @clicked="runBuild" :outputTabHeight="outputTabSize" />
     <div class="vertical-line"></div>
-    <CppText :text="cppOutput" />
+    <CppText :text="cppOutput" :outputTabHeight="outputTabSize" />
   </div>
   <div class="output-wrapper">
     <JanninScriptOutput :text="jsOutput" ref="outputWrapper" />
@@ -20,27 +20,33 @@ export default defineComponent({
   name: "App",
   mounted: function () {
     document.title = "JanninScript Online Compiler";
+
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("onfullscreenchange", this.handleResize);
+  },
+
+  unmount: function () {
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("onfullscreenchange", this.handleResize);
   },
 
   data() {
     return {
       cppOutput: "",
       jsOutput: [],
-      outputTabSize: 100,
+      outputTabSize: 40,
     };
   },
 
-  watch: {
-    jsOutput: function () {
+  methods: {
+    handleResize() {
       this.$nextTick(() => {
         const refs = this.$refs as any;
         const outputWrapper = refs.outputWrapper.$el as HTMLElement;
         this.outputTabSize = outputWrapper.clientHeight;
       });
     },
-  },
 
-  methods: {
     runBuild(value: string) {
       this.cppOutput = value[0];
 
@@ -54,6 +60,12 @@ export default defineComponent({
       }
 
       this.jsOutput = a;
+    },
+  },
+
+  watch: {
+    jsOutput: function () {
+      this.handleResize();
     },
   },
 
@@ -73,7 +85,10 @@ body {
 #app {
   font-family: "Source Code Pro", monospace;
   background-color: rgb(34, 34, 34);
-  min-height: 100vh;
+}
+
+html {
+  overflow-y: hidden;
 }
 
 .vertical-line {
@@ -88,5 +103,6 @@ body {
 
 .ide-wrappers {
   display: flex;
+  overflow-y: hidden;
 }
 </style>
