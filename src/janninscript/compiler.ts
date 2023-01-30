@@ -1,5 +1,7 @@
+const baseJS =
+  "function main() {\nlet output = [];\nfunction addToOutput(arr) {for(let i=0;i<arr.length;i++)output.push(arr[i])}";
 let cppOutput = "";
-let jsOutput = "function main() {\n";
+let jsOutput = baseJS;
 
 function isVectorVar(varNames: string[], name: string) {
   for (let i = 0; i < varNames.length; i++) {
@@ -37,7 +39,7 @@ const vectorVariableNames: string[] = [];
 
 function clearBuild() {
   cppOutput = "";
-  jsOutput = "function main() {\n";
+  jsOutput = baseJS;
 }
 
 function includeToBuild() {
@@ -71,12 +73,9 @@ function addMainFunction() {
 }
 
 function endMainFunction() {
-  // build << "return 0;" << std::endl;
-  // build << "}" << std::endl;
-
   cppOutput += "    return 0;\n}\n";
 
-  jsOutput += "}\nmain()";
+  jsOutput += "return output}\n return main()";
 }
 
 // Anything not in a function is added to the main function
@@ -193,6 +192,8 @@ function readFile(lines: string[]) {
   const line = "";
   const words: string[] = [];
 
+  const jsWords: string[] = [];
+
   // while (std::getline(text, line)) {
   // Split line into words
 
@@ -245,6 +246,26 @@ function readFile(lines: string[]) {
     else if (word == "fn") i = handleAddFn(words, i);
     else if (addDotValue) addToCpp(word + ".value");
     else if (word != "fn") addToCpp(word);
+  }
+
+  // Go through words for js
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+
+    if (word == "var") addToJs("let ");
+    else if (word == ";") addToJs(";\n    ");
+    else if (word == "{") addToJs("{\n    ");
+    else if (word == "}") addToJs("}\n    ");
+    else if (word == "fn") addToJs("function ");
+    else if (word === "print") {
+      addToJs("addToOutput([");
+      i += 2; // Skip "print" and "("
+      while (words[i] != ")") {
+        addToJs(words[i]);
+        i++;
+      }
+      addToJs("])");
+    } else addToJs(word);
   }
 }
 

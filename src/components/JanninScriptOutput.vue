@@ -2,7 +2,10 @@
   <div class="wrapper">
     <p>Output</p>
     <div class="output">
-      <p v-for="line in format(text)" :key="line.key">> {{ line.text }}</p>
+      <p v-for="line in format(text)" :key="line.key">
+        <span class="chevron-right"></span>
+        {{ line.text }}
+      </p>
     </div>
   </div>
 </template>
@@ -13,14 +16,14 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   methods: {
-    format(text: string) {
+    format(text: string[]) {
       interface returnType {
         key: number;
         text: string;
       }
       [];
 
-      const lines = text.split("\n").map((line) => ({ text: line, key: nextId() }));
+      const lines = text.map((line) => ({ text: line, key: nextId() }));
       return lines;
     },
   },
@@ -29,7 +32,7 @@ export default defineComponent({
 
   props: {
     text: {
-      type: String,
+      type: Array as () => string[],
       required: true,
     },
   },
@@ -59,5 +62,14 @@ p {
 
 .output {
   padding: 2px;
+}
+.chevron-right {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid white;
+  margin-right: 5px;
 }
 </style>

@@ -159,9 +159,8 @@ export default defineComponent({
 
 <style scoped>
 .wrapper {
-  width: 100%;
   height: 100%;
-
+  overflow-y: auto;
   flex: 1;
 }
 
