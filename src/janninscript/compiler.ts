@@ -48,10 +48,10 @@ function includeToBuild() {
 
 function addFunctions() {
   const MathFunction =
-    "const double PI = 3.14159265358979323846\nconst double E = 2.71828182845904523536;\nint floor(double x) {\n\treturn (int) x;\n}\nint ceil(double x) {\n\tif (x - (int) x == 0) return (int) x;\n\telse return (int) x + 1;\n}\n\nint round(double x) {\n\tif (x - (int) x >= 0.5) return (int) x + 1;\n\telse return (int) x;\n}\n\ndouble round(double x, int decimals) {\n\tdouble multiplier = 1;\n\tfor (int i = 0; i < decimals; i++) multiplier *= 10;\n\treturn round(x * multiplier) / multiplier;\n}\n\ndouble abs(double x) {\n\treturn x < 0 ? -x : x;\n}\n\ndouble square(double x) {\n\treturn x * x;\n}\n\ndouble pow(double x, double y) {\n\tdouble result = 1;\n\tfor (int i = 0; i < y; i++) {\n\tresult *= x;\n}\nreturn result;\n}\n\ndouble log(double x) {\n\treturn log(x);\n}";
+    "const double PI = 3.14159265358979323846\nconst double E = 2.71828182845904523536;\n\nint floor(double x) {\n    return (int) x;\n}\n\nint ceil(double x) {\n    if (x - (int) x == 0) return (int) x;\n    else return (int) x + 1;\n}\n\nint round(double x) {\n    if (x - (int) x >= 0.5) return (int) x + 1;\n    else return (int) x;\n}\n\ndouble round(double x, int decimals) {\n    double multiplier = 1;\n    for (int i = 0; i < decimals; i++) multiplier *= 10;\n    return round(x * multiplier) / multiplier;\n}\n\ndouble abs(double x) {\n    return x < 0 ? -x : x;\n}\n\ndouble square(double x) {\n    return x * x;\n}\n\ndouble pow(double x, double y) {\n    double result = 1;\n    for (int i = 0; i < y; i++) {\n        result *= x;\n    }\n    return result;\n}\n\ndouble log(double x) {\n    return log(x);\n}";
 
   const PrintFunction =
-    'void print() {\n    std::cout << "\n";\n}\n\ntemplate<typename First, typename ... Strings>\nvoid print(First arg, const Strings&... rest) {\n    std::cout << std::boolalpha << arg  << " ";\n    print(rest...);\n}\n';
+    '\n\nvoid print() {\n    std::cout << "";\n}\n\ntemplate<typename First, typename ... Strings>\nvoid print(First arg, const Strings&... rest) {\n    std::cout << std::boolalpha << arg  << " ";\n    print(rest...);\n}\n';
 
   const MathFunctionJS = "const PI = 3.14159265358979323846;const E = 2.71828182845904523536;";
 
@@ -66,14 +66,14 @@ function addFunctions() {
 }
 
 function addMainFunction() {
-  cppOutput += "int main() {\n";
+  cppOutput += "\nint main() {\n";
 }
 
 function endMainFunction() {
   // build << "return 0;" << std::endl;
   // build << "}" << std::endl;
 
-  cppOutput += "return 0;\n}\n";
+  cppOutput += "    return 0;\n}\n";
 }
 
 // Anything not in a function is added to the main function
@@ -83,11 +83,11 @@ function addToBuild(word: string) {
 
 function addClasses() {
   const VectorBoolClass =
-    "class VectorBool {\npublic:\n    std::vector<bool> data;\n    VectorBool(std::vector<bool> data) {\n        this->data = data;\n    }\n    bool operator[](int index) {\n        return data[index];\n    }\n};\n";
+    "class VectorBool {\npublic:\n    std::vector<bool> data;\n    VectorBool(std::vector<bool> data) {\n        this->data = data;\n    }\n\n    bool operator[](int index) {\n        return data[index];\n    }\n\n};\n\n";
   const VectorDoubleClass =
-    "class VectorDouble {\npublic:\n    std::vector<double> data;\n    VectorDouble(std::vector<double> data) {\n        this->data = data;\n    }\n    double operator[](int index) {\n        return data[index];\n    }\n};\n";
+    "class VectorDouble {\npublic:\n    std::vector<double> data;\n    VectorDouble(std::vector<double> data) {\n        this->data = data;\n    }\n    double operator[](int index) {\n        return data[index];\n    }\n};\n\n";
   const VectorStringClass =
-    "class VectorString {\npublic:\n    std::vector<std::string> data;\n    VectorString(std::vector<std::string> data) {\n        this->data = data;\n    }\n    std::string operator[](int index) {\n        return data[index];\n    }\n};\n";
+    "class VectorString {\npublic:\n    std::vector<std::string> data;\n    VectorString(std::vector<std::string> data) {\n        this->data = data;\n    }\n    std::string operator[](int index) {\n        return data[index];\n    }\n};\n\n";
 
   cppOutput += VectorBoolClass;
   cppOutput += VectorDoubleClass;
@@ -100,7 +100,7 @@ function addClasses() {
 // }
 
 function handleAddVar(words: string[], i: number) {
-  addToBuild("\n\t");
+  addToBuild("\n    ");
 
   let j = i + 1;
   j = skipSpaces(words, j);
@@ -126,7 +126,7 @@ function handleAddVar(words: string[], i: number) {
 
     vectorVariableNames.push(varName);
 
-    addToBuild("\t" + varName + ".value = {\n");
+    addToBuild("    " + varName + ".value = {\n");
     while (words[j] != "]") {
       j = skipSpaces(words, j + 1);
       if (words[j] != "]") {
@@ -134,7 +134,7 @@ function handleAddVar(words: string[], i: number) {
       }
     }
 
-    addToBuild("};\n\t");
+    addToBuild("};\n    ");
   }
 
   // Not an array
@@ -261,9 +261,9 @@ function readFile(lines: string[]) {
     const addDotValue = isVectorVar(vectorVariableNames, word) && words[i + 1][0] != ".";
 
     if (word == "var") i = handleAddVar(words, i);
-    else if (word == ";") addToBuild(";\n\t");
-    else if (word == "{") addToBuild("{\n\t");
-    else if (word == "}") addToBuild("};\n\t");
+    else if (word == ";") addToBuild(";\n    ");
+    else if (word == "{") addToBuild("{\n    ");
+    else if (word == "}") addToBuild("};\n    ");
     else if (word == "fn") i = handleAddFn(words, i);
     else if (addDotValue) addToBuild(word + ".value");
     else if (word != "fn") addToBuild(word);
