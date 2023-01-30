@@ -1,11 +1,11 @@
 <template>
-  <div class="ide-wrappers">
+  <div class="ide-wrappers" :style="{ marginBottom: outputTabSize + 'px' }">
     <JanninScriptTextEditor @clicked="runBuild" />
     <div class="vertical-line"></div>
     <CppText :text="cppOutput" />
   </div>
   <div class="output-wrapper">
-    <JanninScriptOutput :text="jsOutput" />
+    <JanninScriptOutput :text="jsOutput" ref="outputWrapper" />
   </div>
 </template>
 
@@ -25,13 +25,26 @@ export default defineComponent({
     return {
       cppOutput: "",
       jsOutput: "",
+      outputTabSize: 100,
     };
+  },
+
+  watch: {
+    jsOutput: function () {
+      this.$nextTick(() => {
+        const refs = this.$refs as any;
+        const outputWrapper = refs.outputWrapper.$el as HTMLElement;
+        this.outputTabSize = outputWrapper.clientHeight;
+      });
+    },
   },
 
   methods: {
     runBuild(value: string) {
-      this.cppOutput = value;
-      this.jsOutput = "Hello World!";
+      [this.cppOutput, this.jsOutput] = value;
+
+      const func = new Function(this.jsOutput);
+      func();
     },
   },
 

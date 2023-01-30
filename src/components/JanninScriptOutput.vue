@@ -43,16 +43,18 @@ p {
 
 .wrapper {
   color: white;
-  border: 1px solid white;
+  /* border: 1px solid white; */
   background-color: rgb(51, 51, 51);
-  padding: 0 10px;
+  padding: 0.5rem 1rem;
   position: fixed;
   bottom: 0;
-  width: calc(100% - 22px); /* subtract padding and border */
+  width: calc(100% - 1rem); /* subtract padding */
 
   max-height: 50vh;
   overflow-y: auto;
   z-index: 1;
+
+  display: block;
 }
 
 .output {

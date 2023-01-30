@@ -1,5 +1,5 @@
 let cppOutput = "";
-let jsOutput = "";
+let jsOutput = "function main() {\n";
 
 function isVectorVar(varNames: string[], name: string) {
   for (let i = 0; i < varNames.length; i++) {
@@ -37,6 +37,7 @@ const vectorVariableNames: string[] = [];
 
 function clearBuild() {
   cppOutput = "";
+  jsOutput = "function main() {\n";
 }
 
 function includeToBuild() {
@@ -55,14 +56,14 @@ function addFunctions() {
 
   const MathFunctionJS = "const PI = 3.14159265358979323846;const E = 2.71828182845904523536;";
 
-  const PrintFunctionJS =
-    'function print() {\n    console.log("");\n}\n\nfunction print(...args) {\n    console.log(...args);\n}\n';
+  // const PrintFunctionJS =
+  //   'function print() {\n    console.log("");\n}\n\nfunction print(...args) {\n    console.log(...args);\n}\n';
 
   cppOutput += MathFunction;
   cppOutput += PrintFunction;
 
   jsOutput += MathFunctionJS;
-  jsOutput += PrintFunctionJS;
+  // jsOutput += PrintFunctionJS;
 }
 
 function addMainFunction() {
@@ -74,11 +75,22 @@ function endMainFunction() {
   // build << "}" << std::endl;
 
   cppOutput += "    return 0;\n}\n";
+
+  jsOutput += "}\nmain()";
 }
 
 // Anything not in a function is added to the main function
 function addToBuild(word: string) {
   cppOutput += word;
+  jsOutput += word;
+}
+
+function addToCpp(word: string) {
+  cppOutput += word;
+}
+
+function addToJs(word: string) {
+  jsOutput += word;
 }
 
 function addClasses() {
@@ -93,11 +105,6 @@ function addClasses() {
   cppOutput += VectorDoubleClass;
   cppOutput += VectorStringClass;
 }
-
-// std::string figureOutType(std::string word) {
-//     // Return int for now
-//     return "int";
-// }
 
 function handleAddVar(words: string[], i: number) {
   addToBuild("\n    ");
@@ -120,13 +127,13 @@ function handleAddVar(words: string[], i: number) {
 
   // Handle arrays as vectors
   if (words[j] == "[") {
-    if (type == "number") addToBuild("VectorDouble " + varName + ";");
-    else if (type == "string") addToBuild("VectorString " + varName + ";");
-    else if (type == "bool") addToBuild("VectorBool " + varName + ";");
+    if (type == "number") addToCpp("VectorDouble " + varName + ";");
+    else if (type == "string") addToCpp("VectorString " + varName + ";");
+    else if (type == "bool") addToCpp("VectorBool " + varName + ";");
 
     vectorVariableNames.push(varName);
 
-    addToBuild("    " + varName + ".value = {\n");
+    addToCpp("    " + varName + ".value = {\n");
     while (words[j] != "]") {
       j = skipSpaces(words, j + 1);
       if (words[j] != "]") {
@@ -140,7 +147,7 @@ function handleAddVar(words: string[], i: number) {
   // Not an array
   else {
     const varValue = words[j];
-    addToBuild("auto " + varName + "=" + varValue);
+    addToCpp("auto " + varName + "=" + varValue);
   }
 
   i += j - i;
@@ -148,64 +155,35 @@ function handleAddVar(words: string[], i: number) {
   return i;
 }
 
-function skipToEndOfFunction(words: string[], i: number) {
-  let j = i;
-  let bracketCount = 0;
-  let bracketsStarted = false;
-
-  while (j < words.length) {
-    if (words[j] == "{") {
-      bracketCount++;
-      bracketsStarted = true;
-    }
-    if (words[j] == "}") bracketCount--;
-    if (bracketsStarted && bracketCount == 0) return j;
-
-    j++;
-  }
-
-  return j;
-}
-
-function skipToNextFunction(words: string[], i: number) {
-  let j = i;
-  while (j < words.length) {
-    if (words[j] == "fn") return j;
-    j++;
-  }
-
-  return j;
-}
-
 function handleAddFn(words: string[], i: number) {
-  addToBuild("auto ");
+  addToCpp("auto ");
   i = skipSpaces(words, i + 1);
-  addToBuild(words[i] + " = []");
+  addToCpp(words[i] + " = []");
 
   i = skipSpaces(words, i + 1);
 
   // Add parameters
-  addToBuild("(");
+  addToCpp("(");
 
   i = skipSpaces(words, i + 1);
-  if (words[i] == ")") addToBuild(")");
+  if (words[i] == ")") addToCpp(")");
   else {
     while (words[i] != ")") {
-      addToBuild("auto " + words[i]);
+      addToCpp("auto " + words[i]);
       i = skipSpaces(words, i + 1);
 
       if (words[i] == ")") {
-        addToBuild(")");
+        addToCpp(")");
         break;
       }
 
-      addToBuild(",");
+      addToCpp(",");
       i = skipSpaces(words, i + 1);
     }
   }
 
   // Add function body
-  addToBuild("\n");
+  addToCpp("\n");
 
   return i;
 }
@@ -261,12 +239,12 @@ function readFile(lines: string[]) {
     const addDotValue = isVectorVar(vectorVariableNames, word) && words[i + 1][0] != ".";
 
     if (word == "var") i = handleAddVar(words, i);
-    else if (word == ";") addToBuild(";\n    ");
-    else if (word == "{") addToBuild("{\n    ");
-    else if (word == "}") addToBuild("};\n    ");
+    else if (word == ";") addToCpp(";\n    ");
+    else if (word == "{") addToCpp("{\n    ");
+    else if (word == "}") addToCpp("};\n    ");
     else if (word == "fn") i = handleAddFn(words, i);
-    else if (addDotValue) addToBuild(word + ".value");
-    else if (word != "fn") addToBuild(word);
+    else if (addDotValue) addToCpp(word + ".value");
+    else if (word != "fn") addToCpp(word);
   }
 }
 
@@ -281,7 +259,7 @@ export default function compile(lines: string[]) {
   readFile(lines);
   endMainFunction();
 
-  return cppOutput;
+  return [cppOutput, jsOutput];
 }
 
 //     EMSCRIPTEN_KEEPALIVE
