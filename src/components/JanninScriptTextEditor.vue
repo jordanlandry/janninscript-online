@@ -4,7 +4,7 @@
       <p class="file-name">Build.jannin</p>
     </div>
     <div class="button-wrapper">
-      <button class="run-btn">Run</button>
+      <button class="run-btn" @click="run">Run</button>
     </div>
   </div>
 
@@ -21,6 +21,8 @@ import { handleKeybind, preventDefaultKeys } from "@/keybinds";
 import { defineComponent } from "vue";
 import ScriptLine from "./ScriptLine.vue";
 import TextCursor from "./TextCursor.vue";
+import compile from "@/janninscript/compiler";
+
 // import handleKeybind from "../keybinds";
 // import preventDefaultKeys from "../keybinds";
 
@@ -50,7 +52,13 @@ export default defineComponent({
     window.removeEventListener("keydown", (e) => this.handleKeydown(e));
   },
 
+  emits: ["clicked"],
   methods: {
+    run() {
+      const cpp = compile(this.lines);
+      this.$emit("clicked", cpp);
+    },
+
     setActiveLine(line: number) {
       this.linePosition = Math.min(this.currentMaxPosition, this.lines[line].length);
       this.activeLine = line;
