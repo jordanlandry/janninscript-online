@@ -270,8 +270,6 @@ function readFile(lines: string[]) {
   }
 }
 
-// extern "C" {
-
 export default function compile(lines: string[]) {
   clearBuild();
 
@@ -282,8 +280,6 @@ export default function compile(lines: string[]) {
   addMainFunction();
   readFile(lines);
   endMainFunction();
-
-  // return "PP\n\nPP";
 
   return cppOutput;
 }
