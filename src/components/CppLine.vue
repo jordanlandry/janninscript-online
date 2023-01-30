@@ -1,7 +1,9 @@
 <template>
-  <span v-for="token in formatText(text)" :key="token.key" :class="token.className">
-    {{ token.text }}
-  </span>
+  <div class="wrapper">
+    <span v-for="token in formatText(text)" :key="token.key" :class="token.className">
+      {{ token.text }}
+    </span>
+  </div>
 </template>
 
 <script lang="ts">
@@ -90,6 +92,7 @@ export default defineComponent({
         "public",
         "private",
         "protected",
+        "#include",
       ]),
 
       brackets: new Set(["(", ")", "{", "}", "[", "]"]),
@@ -98,6 +101,7 @@ export default defineComponent({
         " ",
         ";",
         "\t",
+        "\n",
         "(",
         ")",
         "{",
@@ -139,10 +143,14 @@ export default defineComponent({
       // Get words as array
       const words: string[] = [];
       let word = "";
+
+      if (text.length === 0) {
+        return [{ key: 0, text: " ", className: "line", index: 0 }];
+      }
+
       for (let i = 0; i < text.length; i++) {
         const char = text[i];
 
-        if (char === "\t") words.push("    ");
         if (this.endOfWord.has(char)) {
           words.push(word);
           word = "";
@@ -162,6 +170,8 @@ export default defineComponent({
         else if (this.keywords.has(word)) className = "keyword";
         else if (this.brackets.has(word)) className = "operator";
         else if (this.punctuation.has(word)) className = "punctuation";
+        else if (word === " ") className = "space";
+        else if (word === "\n") className = "line";
 
         tokens.push({
           text: word,
@@ -185,6 +195,34 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.wrapper {
+  height: 24px;
+  display: flex;
+  align-items: center;
+
+  margin-left: 6px;
+}
+
+.line {
+  display: block;
+  height: 24px;
+  /* margin-top: 9.61px; */
+  width: 100%;
+}
+
+.space {
+  margin-left: 9.61px; /* 1 space */
+  font-size: 0;
+}
+
+.variable {
+  color: white;
+}
+
+.punctuation {
+  color: grey;
+}
+
 .keyword {
   color: #78dce8;
 }

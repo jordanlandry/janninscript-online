@@ -43,7 +43,7 @@ function includeToBuild() {
   cppOutput += "#include <iostream>\n";
   cppOutput += "#include <string>\n";
   cppOutput += "#include <fstream>\n";
-  cppOutput += "#include <vector>\n";
+  cppOutput += "#include <vector>\n\n";
 }
 
 function addFunctions() {
@@ -126,7 +126,7 @@ function handleAddVar(words: string[], i: number) {
 
     vectorVariableNames.push(varName);
 
-    addToBuild("\t" + varName + ".value = {");
+    addToBuild("\t" + varName + ".value = {\n");
     while (words[j] != "]") {
       j = skipSpaces(words, j + 1);
       if (words[j] != "]") {
@@ -282,6 +282,8 @@ export default function compile(lines: string[]) {
   addMainFunction();
   readFile(lines);
   endMainFunction();
+
+  // return "PP\n\nPP";
 
   return cppOutput;
 }

@@ -46,7 +46,7 @@ export default defineComponent({
     return {
       lineHeight: 24,
       headerHeight: 52,
-      letterSize: 9.62,
+      letterSize: 9.61,
       lineNumberWidth: 24,
 
       counter: 0,

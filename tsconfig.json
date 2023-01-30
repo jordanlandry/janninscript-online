@@ -24,8 +24,8 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/webasm/a.out.js",
-    "src/webasm/a.out.js"
+    "webasm/a.out.js",
+    "webasm/a.out.js"
   ],
   "exclude": ["node_modules"]
 }

@@ -1,17 +1,24 @@
 <template>
-  <div class="header">
-    <div>
-      <p class="file-name">Build.jannin</p>
+  <div class="wrapper">
+    <div class="header">
+      <div>
+        <p class="file-name">Build.jannin</p>
+      </div>
+      <div class="button-wrapper">
+        <button class="run-btn" @click="run">Run</button>
+      </div>
     </div>
-    <div class="button-wrapper">
-      <button class="run-btn" @click="run">Run</button>
-    </div>
-  </div>
 
-  <div class="text-editor" tabindex="-1">
-    <TextCursor :linePosition="linePosition" :activeLine="activeLine" />
-    <div v-for="(line, index) in lines" v-bind:key="index * Math.random()">
-      <ScriptLine :text="line" :activeLine="activeLine === index" :lineNumber="index" @setActiveLine="setActiveLine" />
+    <div class="text-editor" tabindex="-1">
+      <TextCursor :linePosition="linePosition" :activeLine="activeLine" />
+      <div v-for="(line, index) in lines" v-bind:key="index * Math.random()">
+        <ScriptLine
+          :text="line"
+          :activeLine="activeLine === index"
+          :lineNumber="index"
+          @setActiveLine="setActiveLine"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -154,6 +161,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.wrapper {
+  width: 100%;
+  height: 100%;
+
+  flex: 1;
+}
+
 .header {
   display: flex;
 }
@@ -190,7 +204,6 @@ export default defineComponent({
   background-color: rgb(34, 34, 34);
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   user-select: none;
 
   font-size: 16px;
