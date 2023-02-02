@@ -14,7 +14,6 @@ import { defineComponent } from "vue";
 import JanninScriptTextEditor from "./components/JanninScriptTextEditor.vue";
 import JanninScriptOutput from "./components/JanninScriptOutput.vue";
 import CppText from "./components/CppText.vue";
-import { COMPLETIONSTATEMENT_TYPES } from "@babel/types";
 
 export default defineComponent({
   name: "App",
@@ -52,14 +51,14 @@ export default defineComponent({
 
       const func = new Function(value[1]);
 
-      let a;
+      let outputValue;
       try {
-        a = func();
+        outputValue = func();
       } catch (e) {
-        a = [e + ""];
+        outputValue = [e + ""];
       }
 
-      this.jsOutput = a;
+      this.jsOutput = outputValue;
     },
   },
 

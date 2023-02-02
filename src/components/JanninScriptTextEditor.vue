@@ -11,7 +11,7 @@
 
     <div class="text-editor" tabindex="-1">
       <TextCursor :linePosition="linePosition" :activeLine="activeLine" />
-      <div v-for="(line, index) in lines" v-bind:key="index * Math.random()">
+      <div v-for="(line, index) in lines" v-bind:key="index + Date.now()">
         <ScriptLine
           :text="line"
           :activeLine="activeLine === index"
@@ -29,6 +29,7 @@ import { defineComponent } from "vue";
 import ScriptLine from "./ScriptLine.vue";
 import TextCursor from "./TextCursor.vue";
 import compile from "@/janninscript/compiler";
+import nextId from "@/helpers/nextId";
 
 interface KeyStringObject {
   [key: string]: string;
@@ -47,6 +48,8 @@ export default defineComponent({
       height: window.innerHeight - this.$props.outputTabHeight,
 
       phantomBracket: 0,
+
+      id: nextId(),
     };
   },
 
@@ -81,6 +84,8 @@ export default defineComponent({
 
     handleKeydown(e: KeyboardEvent) {
       const { key } = e;
+
+      this.id = nextId();
 
       // If the key is "Backspace" for example, then the next char won't be NaN
       const valid = isNaN(key.charCodeAt(1)) && key.charCodeAt(0);
