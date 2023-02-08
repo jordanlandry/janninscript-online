@@ -66,7 +66,7 @@ export default defineComponent({
 <style scoped>
 .cursor {
   position: absolute;
-  width: 1px;
+  width: 2px;
   height: 1.5rem;
   background-color: #fff;
 }

@@ -40,7 +40,17 @@ export default defineComponent({
     return {
       activeLine: 0,
       linePosition: 0,
-      lines: [""],
+      lines: [
+        "",
+        "fn printMessage(message) {",
+        "    print(message)",
+        "}",
+        "",
+        "for (var i = 0; i < 10; i++) {",
+        '    printMessage("Hello JanninScript!")',
+        "}",
+        "",
+      ],
 
       // When you use arrow keys, this is the max position to the right it should go based on previous positions
       currentMaxPosition: 0,
@@ -154,10 +164,6 @@ export default defineComponent({
   components: {
     ScriptLine,
     TextCursor,
-  },
-
-  computed: {
-    console: () => console,
   },
 
   props: {

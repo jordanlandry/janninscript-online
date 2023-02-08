@@ -66,6 +66,7 @@ export default defineComponent({
 
       const res: Token[] = [];
       let currentWord = "";
+
       for (let i = 0; i < text!.length; i++) {
         index++;
         const char = text![i];
@@ -101,8 +102,8 @@ export default defineComponent({
           char === ","
         ) {
           // Get className
-          let className = "variable";
 
+          let className = "variable";
           // isNaN because if val is 0, it will think it's false if I just do "if (parseInt)"
           if (!isNaN(parseInt(currentWord))) className = "value";
           else if (this.keywords[currentWord]) className = this.keywords[currentWord];

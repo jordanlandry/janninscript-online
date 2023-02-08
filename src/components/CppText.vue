@@ -48,6 +48,9 @@ export default defineComponent({
     toggleShowBase: function (newVal: boolean) {
       if (newVal) this.totalFile = this.baseFile + this.file;
       else this.totalFile = this.file;
+
+      // Now that you're showing the base, you'll have more lines so you need to update the height
+      this.handleResize();
     },
 
     text: function (newVal: string) {
@@ -81,7 +84,8 @@ export default defineComponent({
     },
 
     clear() {
-      console.warn("Clearing not implemented yet");
+      // console.warn("Clearing not implemented yet");
+      this.$emit("clear");
     },
   },
 

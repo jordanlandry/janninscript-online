@@ -2,7 +2,7 @@
   <div class="ide-wrappers" v-if="!isMobile()">
     <JanninScriptTextEditor @clicked="runBuild" :outputTabHeight="outputTabSize" />
     <div class="vertical-line"></div>
-    <CppText :text="cppOutput" :outputTabHeight="outputTabSize" />
+    <CppText :text="cppOutput" :outputTabHeight="outputTabSize" @clear="clearCPP" />
   </div>
   <div class="output-wrapper">
     <JanninScriptOutput :text="jsOutput" ref="outputWrapper" />
@@ -42,6 +42,10 @@ export default defineComponent({
   },
 
   methods: {
+    clearCPP() {
+      this.cppOutput = "";
+    },
+
     isMobile() {
       if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return true;
       else return false;
