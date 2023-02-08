@@ -1,11 +1,15 @@
 <template>
-  <div class="ide-wrappers">
+  <div class="ide-wrappers" v-if="!isMobile()">
     <JanninScriptTextEditor @clicked="runBuild" :outputTabHeight="outputTabSize" />
     <div class="vertical-line"></div>
     <CppText :text="cppOutput" :outputTabHeight="outputTabSize" />
   </div>
   <div class="output-wrapper">
     <JanninScriptOutput :text="jsOutput" ref="outputWrapper" />
+  </div>
+
+  <div v-if="isMobile()" class="mobile">
+    Unfortunately the mobile version of the JanninScript online compiler is not yet supported.
   </div>
 </template>
 
@@ -38,6 +42,11 @@ export default defineComponent({
   },
 
   methods: {
+    isMobile() {
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) return true;
+      else return false;
+    },
+
     handleResize() {
       this.$nextTick(() => {
         const refs = this.$refs as any;
@@ -103,5 +112,11 @@ html {
 .ide-wrappers {
   display: flex;
   overflow-y: hidden;
+}
+
+.mobile {
+  color: white;
+  height: 100vh;
+  width: 100vw;
 }
 </style>

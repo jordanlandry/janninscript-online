@@ -2,6 +2,7 @@
 
 An online compiler of my programming language, JanninScript
 For info and syntax of JanninScript, see the [JanninScript Repo](https://github.com/jordanlandry/janninscript)
+Mobile support is not currently available.
 
 [Try it out here!](https://jordanlandry.github.io/janninscript-online/)
 
